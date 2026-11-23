@@ -1,4 +1,5 @@
 #include "ripes_system.h"
+#include <stdbool.h>
 #define SW0 (0x01)
 #define SW1 (0x02)
 #define SW2 (0x04)
@@ -19,9 +20,12 @@ volatile unsigned int * d_pad_right = D_PAD_0_RIGHT;
 void main()
 {
 unsigned int mask = 0;
-unsigned int snake_pos_x=5;
-unsigned int snake_pos_y=5;
+unsigned int snake_pos_x=6;
+unsigned int snake_pos_y=6;
+unsigned int manzana_pos_x=10;
+unsigned int manzana_pos_y=10;
 unsigned int dir=RIGHT;
+unsigned int size = 1;
 
 while (1){
 
@@ -39,7 +43,24 @@ while (1){
         snake_pos_x-=2;}
     if (dir==RIGHT){
         snake_pos_x+=2;}
+    
+    if (snake_pos_x==manzana_pos_x&&snake_pos_y==manzana_pos_y){
+        size++;
+        manzana_pos_x=2;
+        manzana_pos_y=2;
+    }
 
+    *(led_base+manzana_pos_x+manzana_pos_y*LED_MATRIX_0_WIDTH)=MANZANA;
+    *(led_base+manzana_pos_x+manzana_pos_y*LED_MATRIX_0_WIDTH+1)=MANZANA;
+    *(led_base+manzana_pos_x+manzana_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH)=MANZANA;
+    *(led_base+manzana_pos_x+manzana_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH+1)=MANZANA;
+
+    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH)=SNAKE;
+    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+1)=SNAKE;
+    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH)=SNAKE;
+    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH+1)=SNAKE;
+
+    for(volatile unsigned int i=0;i<10000;i++){
     if(*d_pad_up == 1){
         dir=UP;}
 
@@ -51,10 +72,6 @@ while (1){
 
     if(*d_pad_right == 1){
         dir=RIGHT;}
-
-    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH)=SNAKE;
-    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+1)=SNAKE;
-    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH)=SNAKE;
-    *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH+1)=SNAKE;
+    }
     
 }}
