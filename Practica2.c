@@ -1,5 +1,7 @@
 #include "ripes_system.h"
 #include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 #define SW0 (0x01)
 #define SW1 (0x02)
 #define SW2 (0x04)
@@ -17,13 +19,29 @@ volatile unsigned int * d_pad_up = D_PAD_0_UP;
 volatile unsigned int * d_pad_down = D_PAD_0_DOWN;
 volatile unsigned int * d_pad_left = D_PAD_0_LEFT;
 volatile unsigned int * d_pad_right = D_PAD_0_RIGHT;
+
 void main()
 {
+srand((unsigned int)time(NULL));
+int ancho = LED_MATRIX_0_WIDTH;
+int alto = LED_MATRIX_0_HEIGHT;
 unsigned int mask = 0;
-unsigned int snake_pos_x=6;
-unsigned int snake_pos_y=6;
-unsigned int manzana_pos_x=10;
-unsigned int manzana_pos_y=10;
+unsigned int snake_pos_x=1;
+unsigned int snake_pos_y=1;
+unsigned int manzana_pos_x=1;
+unsigned int manzana_pos_y=1;
+
+while (snake_pos_x%2!=0){
+    snake_pos_x=(rand()%(ancho-2));}
+while (snake_pos_y%2!=0){
+    snake_pos_y=(rand()%(alto-2));}
+
+while (manzana_pos_x%2!=0 || snake_pos_x!=manzana_pos_x){
+    manzana_pos_x=(rand()%(ancho-2));}
+while (manzana_pos_y%2!=0 || snake_pos_y!=manzana_pos_y){
+    manzana_pos_y=(rand()%(alto-2));}
+
+
 unsigned int dir=RIGHT;
 unsigned int size = 1;
 
@@ -46,8 +64,11 @@ while (1){
     
     if (snake_pos_x==manzana_pos_x&&snake_pos_y==manzana_pos_y){
         size++;
-        manzana_pos_x=2;
-        manzana_pos_y=2;
+    while (manzana_pos_x%2!=0 || snake_pos_x==manzana_pos_x){
+        manzana_pos_x=(rand()%(ancho-2));}
+    while (manzana_pos_y%2!=0 || snake_pos_y==manzana_pos_y){
+        manzana_pos_y=(rand()%(alto-2));}
+
     }
 
     *(led_base+manzana_pos_x+manzana_pos_y*LED_MATRIX_0_WIDTH)=MANZANA;
@@ -60,7 +81,7 @@ while (1){
     *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH)=SNAKE;
     *(led_base+snake_pos_x+snake_pos_y*LED_MATRIX_0_WIDTH+LED_MATRIX_0_WIDTH+1)=SNAKE;
 
-    for(volatile unsigned int i=0;i<10000;i++){
+    for(volatile unsigned int i=0;i<5000;i++){
     if(*d_pad_up == 1){
         dir=UP;}
 
