@@ -20,8 +20,13 @@ volatile unsigned int * d_pad_down = D_PAD_0_DOWN;
 volatile unsigned int * d_pad_left = D_PAD_0_LEFT;
 volatile unsigned int * d_pad_right = D_PAD_0_RIGHT;
 
+
+
 void main()
 {
+bool endgame = false;
+unsigned int dir=RIGHT;
+unsigned int size = 1;
 srand((unsigned int)time(NULL));
 int ancho = LED_MATRIX_0_WIDTH;
 int alto = LED_MATRIX_0_HEIGHT;
@@ -42,11 +47,37 @@ while (manzana_pos_y%2!=0 || snake_pos_y[0]==manzana_pos_y){
     manzana_pos_y=(rand()%(alto-2));}
 
 
-unsigned int dir=RIGHT;
-unsigned int size = 1;
 
 while (1){
 
+    //esto es para reiniciar
+if(*switch_base==1){
+    //no hace falta reiniciar el arreglo de la posicion de la serpiente
+    //porque no se vera, eso depende del size
+    for(int i=0;i<ancho*alto;i++){
+        *(led_base+i)=BORRAR;
+    }
+    size=0;
+    snake_pos_x[0]=1;
+    snake_pos_y[0]=1;
+    manzana_pos_x=1;
+    manzana_pos_y=1;
+    while (snake_pos_x[0]%2!=0){
+        snake_pos_x[0]=(rand()%(ancho-2));}
+    while (snake_pos_y[0]%2!=0){
+        snake_pos_y[0]=(rand()%(alto-2));}
+    while (manzana_pos_x%2!=0 || snake_pos_x[0]==manzana_pos_x){
+        manzana_pos_x=(rand()%(ancho-2));}
+    while (manzana_pos_y%2!=0 || snake_pos_y[0]==manzana_pos_y){
+        manzana_pos_y=(rand()%(alto-2));}
+    dir=RIGHT;
+    size=1;
+    endgame=false;
+    while(*switch_base==1){}
+}
+
+
+if (endgame==false){
 
     *(led_base+snake_pos_x[size-1]+snake_pos_y[size-1]*LED_MATRIX_0_WIDTH)=BORRAR;
     *(led_base+snake_pos_x[size-1]+snake_pos_y[size-1]*LED_MATRIX_0_WIDTH+1)=BORRAR;
@@ -73,7 +104,6 @@ while (1){
         manzana_pos_x=(rand()%(ancho-2));}
     while (manzana_pos_y%2!=0 || snake_pos_y[0]==manzana_pos_y){
         manzana_pos_y=(rand()%(alto-2));}
-
     }
 
     
@@ -102,5 +132,6 @@ while (1){
     if(*d_pad_right == 1 && dir!=LEFT){
         dir=RIGHT;}
     }
-    
+}
+
 }}
