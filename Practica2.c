@@ -57,7 +57,6 @@ if(*switch_base==1){
     for(int i=0;i<ancho*alto;i++){
         *(led_base+i)=BORRAR;
     }
-    size=0;
     snake_pos_x[0]=1;
     snake_pos_y[0]=1;
     manzana_pos_x=1;
@@ -78,6 +77,12 @@ if(*switch_base==1){
 
 
 if (endgame==false){
+
+    if ((snake_pos_y[0]<2&&dir==UP)||((snake_pos_y[0]+2)>(alto-2)&&dir==DOWN)||
+    ((snake_pos_x[0])<2&&dir==LEFT)||((snake_pos_x[0]+2)>(ancho-2))&&dir==RIGHT){
+        endgame=true;
+        continue;
+    }
 
     *(led_base+snake_pos_x[size-1]+snake_pos_y[size-1]*LED_MATRIX_0_WIDTH)=BORRAR;
     *(led_base+snake_pos_x[size-1]+snake_pos_y[size-1]*LED_MATRIX_0_WIDTH+1)=BORRAR;
