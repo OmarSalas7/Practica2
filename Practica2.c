@@ -1,4 +1,4 @@
-z#include "ripes_system.h"
+#include "ripes_system.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
