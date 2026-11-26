@@ -1,4 +1,4 @@
-#include "ripes_system.h"
+z#include "ripes_system.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
@@ -51,7 +51,7 @@ while (manzana_pos_y%2!=0 || snake_pos_y[0]==manzana_pos_y){
 while (1){
 
     //esto es para reiniciar
-if(*switch_base==1){
+if(*switch_base&SW0){
     //no hace falta reiniciar el arreglo de la posicion de la serpiente
     //porque no se vera, eso depende del size
     for(int i=0;i<ancho*alto;i++){
@@ -72,7 +72,7 @@ if(*switch_base==1){
     dir=RIGHT;
     size=1;
     endgame=false;
-    while(*switch_base==1){}
+    while(*switch_base&SW0){}
 }
 
 
@@ -82,6 +82,21 @@ if (endgame==false){
     ((snake_pos_x[0])<2&&dir==LEFT)||((snake_pos_x[0]+2)>(ancho-2))&&dir==RIGHT){
         endgame=true;
         continue;
+    }
+
+    if (size>4){
+        for(int i=3;i<size-1;i++){
+        if((dir==UP&&snake_pos_y[0]-2==snake_pos_y[i]&&snake_pos_x[0]==snake_pos_x[i])||
+            (dir==DOWN&&snake_pos_y[0]+2==snake_pos_y[i]&&snake_pos_x[0]==snake_pos_x[i])||
+            (dir==LEFT&&snake_pos_x[0]-2==snake_pos_x[i]&&snake_pos_y[0]==snake_pos_y[i])||
+            (dir==RIGHT&&snake_pos_x[0]+2==snake_pos_x[i]&&snake_pos_y[0]==snake_pos_y[i])){
+                endgame=true;
+                break;
+            }
+        }
+        if (endgame){
+            continue;   
+            }
     }
 
     *(led_base+snake_pos_x[size-1]+snake_pos_y[size-1]*LED_MATRIX_0_WIDTH)=BORRAR;
@@ -105,10 +120,21 @@ if (endgame==false){
     
     if (snake_pos_x[0]==manzana_pos_x&&snake_pos_y[0]==manzana_pos_y){
         size++;
-    while (manzana_pos_x%2!=0 || snake_pos_x[0]==manzana_pos_x){
-        manzana_pos_x=(rand()%(ancho-2));}
-    while (manzana_pos_y%2!=0 || snake_pos_y[0]==manzana_pos_y){
-        manzana_pos_y=(rand()%(alto-2));}
+    
+    bool solapamiento;
+    do{
+        solapamiento = false;
+        do{
+        manzana_pos_x=(rand()%(ancho-2));
+        manzana_pos_y=(rand()%(alto-2));
+        }while(manzana_pos_x%2!=0 || manzana_pos_y%2!=0 || 
+            (snake_pos_y[0]==manzana_pos_y&&snake_pos_x[0]==manzana_pos_x));
+        
+        for (int i=0;i<size;i++) {
+            if (manzana_pos_x==snake_pos_x[i]&&manzana_pos_y==snake_pos_y[i]){
+                solapamiento=true;
+                break;
+            }}}while(solapamiento);
     }
 
     
